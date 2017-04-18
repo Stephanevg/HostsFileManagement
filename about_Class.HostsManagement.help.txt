@@ -1,0 +1,144 @@
+﻿TOPIC
+    about_ClassHostsManagement
+
+SHORT DESCRIPTION
+    Manage Hosts file using Powershell Classes.
+
+LONG DESCRIPTION
+    This modules helps to reade, parse, save, edit, and backup your local or remote HOSTS file.
+    The main advantage of this module is that it makes converts the 'unstructured' HOSTS file, into a rich object.
+    It becomes easy to filter a HOSTS file to find entries that are double, incorrect, or that need to be deleted.
+    New entries can easily be added as well.
+
+    The module is composted of the following components:
+    - HostsFile (Class)
+      Represents in instance of a HOSTS file (Can be local, or remote).
+
+    - HostsEntry (Class)
+      Represents an instance of a HOSTS file entry (a simple line of a HOSTS file).
+      
+    - HostsEntryType (Enum)
+      Represents the type of the HOSTS Entry line.
+
+
+      Structure:
+
+      [HostsFile]
+        |--> [HostsEntry]
+        |--> [HostsEntry]
+        |--> [HostsEntry]
+                    |--> [HostsentryType]
+
+      The difference classes (and Enum(s)) represent the logical structure of a HOSTS file and it's content.
+      A HostsFile points to a file (which is by default, but not necessarly, located at "c:\System32\drivers\etc\hosts").
+      The HostsFile contains several entries (or lines). Each Hosts file entry is an object that can be of one of these different types (which are grouped together in the 'HostsEntryType' Enum).
+      
+      Entry:
+      It can be a regular entry. It links an IP address to a HostsName, and a Full qualified name. Additionnaly, it can have a comment at the end to give additional information about the entry.
+
+      Comment:
+      A comment in the HOSTS file starts with the symbol # (pound). A comment can either be used to comment a Hosts entry, or to delimit a header section, in order to group entries logically together.
+
+      BlankLine:
+      A hosts file can contain blank lines to separate the different entries and comments, in order to create a more friendly to read structure.
+
+
+  Add an entry to the hosts file:
+    1) Create an entry using the [HostsEntry]
+    2) Add the Entry to a hosts file loaded through the [HostsFile] class using the .AddHostsEntry([HostsEntry[]]$Entries) method.
+    3) use .set() method on HostsFile to persist the changes into Hosts file.
+
+  #Remove an entry to the hosts file:
+    1) Create an entry using the [HostsEntry] / filter to find the entry to remove.
+    2) Remove the entry using the .RemoveHostsEntry([HostsEntry[]]$Entries) method.
+    3) use .set() method on HostsFile to persist the changes into Hosts file.
+
+  It is possible to have a verbose output using the following command:
+    $VerbosePreference = "Continue"
+
+
+EXAMPLES
+
+  #Load the module (if module located in path contained in $psmodulepath)
+    Using module ClassHostsManagement.psd1
+
+  #Load the module (if module located in path contained in $psmodulepath)
+    Using module <PathToFile>\ClassHostsManagement.psd1
+
+  #Reading HostsFile entries (Constructor -> [HostsFile]::())
+    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
+    $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
+    $HostsFile.GetEntries() #Display all entries loaded into memory.
+
+  #Reading HostsFile entries from alternate path (Constructor -> [HostsFile]::($Item [System.IO.FileSystemInfo]))
+    $Item = Get-Item "C:\MyFiles\Backups\20170418-143835_Hosts.bak"
+    $HostsFile = [HostsFile]::new($Item) #Loads a backup HOSTS file into memory. Needs variable of type System.IO.FileSystemInfo.       
+    $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
+    $HostsFile.GetEntries() #Display all entries loaded into memory.
+
+  #Reading HostsFile entries from remote computer (Constructor -> [HostsFile]::($ComputerName [String]))
+    $HostsFile = [HostsFile]::("Server02")
+    $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
+    $HostsFile.GetEntries() #Display all entries loaded into memory.
+
+  #How to create a backup of current hosts file
+    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
+    $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
+    $HostsFile.Backup() #Creates a backup of the current data located into memory (Entries) respecting the following format: YYYYMMDD-HHmmss_Hosts.bak
+
+  #Creating a HOSTS entry (HostsTypeEntry -eq Entry)
+    $IpAddress = "192.168.2.2"
+    $HostName = "Computer02"
+    $fqdn = "Computer02.powershelldistrict.com"
+    $Description = "Awesome Server"
+    $Entry = [HostsEntry]::new($IpAddress,$HostName,$fqdn,$Description,[HostsEntryType]::Entry)
+
+    #Effective line in HOSTS file: 
+      192.168.2.1		Computer01		Computer01.powershelldistrict.com #Awesome Server
+
+  #Creating a HOSTS comment (HostsTypeEntry -eq Comment)
+    $IpAddress = "192.168.2.2"
+    $HostName = "Computer02"
+    $fqdn = "Computer02.powershelldistrict.com"
+    $Description = "This line is commented out"
+    $Entry = [HostsEntry]::new($IpAddress,$HostName,$fqdn,$Description,[HostsEntryType]::Comment)
+
+    #Effective line in HOSTS file: 
+      #192.168.2.2		Computer02		Computer02.powershelldistrict.com #This line is commented out
+
+  #Creating a blank line
+    $Entry = [HostsEntry]::new()
+   
+  #Creating a line containing only a comment (section / title purposes)
+    $Entry = [HostsEntry]::new("All Primary Servers",[HostsEntryType]::comment)
+
+    #Effective line in HOSTS file:
+      #All primary Servers
+
+  #Adding entries to the HostsFile
+    $Entries = @()
+    $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
+    $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
+    $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
+    
+    $HostFile.AddHostsEntry($Entries)
+
+  #Removing Hosts entries
+    $Entries = @()
+    
+    $Entries += [HostsEntry]::new("1.2.3.7","dc01","dc01.powershelldistrict.com","",[HostsEntryType]::Entry)
+    $Entries += [HostsEntry]::new("1.2.3.5		plop             plop.powershelldistrict.com   ")
+    
+    $HostFile.ReadHostsFileContent()
+    $HostFile.RemoveHostEntry($Entries)
+
+  
+  #Persist changes to file
+    $HostFile.Set()
+
+
+KEYWORDS
+    Class hosts
+
+SEE ALSO
+    powershelldistrict -> search for hosts 
