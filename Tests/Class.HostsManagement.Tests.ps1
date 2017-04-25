@@ -344,7 +344,7 @@ Describe 'HostsFile' {
     $Entries += [HostsEntry]::new("1.2.3.5		plop             plop.powershelldistrict.com   ")
     
     $HostFile.ReadHostsFileContent()
-    $HostFile.RemoveHostEntry($Entries)
+    $HostFile.RemoveHostsEntry($Entries)
     
     $HostFile.GetEntries()
     
