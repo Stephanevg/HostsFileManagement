@@ -42,6 +42,9 @@ LONG DESCRIPTION
       BlankLine:
       A hosts file can contain blank lines to separate the different entries and comments, in order to create a more friendly to read structure.
 
+  Read a hosts file:
+    1) Create an instance of the [Hostsfile] class
+    2) Call the GetHostsEntries Method
 
   Add an entry to the hosts file:
     1) Create an entry using the [HostsEntry]
@@ -65,6 +68,8 @@ EXAMPLES
   #Load the module (if module located in path contained in $psmodulepath)
     Using module <PathToFile>\ClassHostsManagement.psd1
 
+###Reading Entries
+
   #Reading HostsFile entries (Constructor -> [HostsFile]::())
     $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
     $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
@@ -81,10 +86,22 @@ EXAMPLES
     $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
     $HostsFile.GetEntries() #Display all entries loaded into memory.
 
-  #How to create a backup of current hosts file
+###Creating Backups
+
+  #How to create a backup of current hosts file (Default location)
+    ##The backup will be created in the same folder that holds the current HOSTS folder (defined through the Path Property).
     $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
     $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
     $HostsFile.Backup() #Creates a backup of the current data located into memory (Entries) respecting the following format: YYYYMMDD-HHmmss_Hosts.bak
+
+  #How to create a backup of current hosts file (Alternate location)
+    ## Use this method create a backp of the HOSTS file content located in memory (Visible Through getEntries()) to a seperate location. 
+    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
+    $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
+    $folder = Get-Item -Path C:\Temp\backup
+    $HostsFile.Backup($Folder)
+
+###Creating New Entries
 
   #Creating a HOSTS entry (HostsTypeEntry -eq Entry)
     $IpAddress = "192.168.2.2"
@@ -115,6 +132,8 @@ EXAMPLES
     #Effective line in HOSTS file:
       #All primary Servers
 
+###Adding Entries 
+
   #Adding entries to the HostsFile
     $Entries = @()
     $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
@@ -122,6 +141,8 @@ EXAMPLES
     $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
     
     $HostFile.AddHostsEntry($Entries)
+
+###Removing Entries 
 
   #Removing Hosts entries
     $Entries = @()
