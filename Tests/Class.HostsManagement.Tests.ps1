@@ -95,23 +95,23 @@ Describe 'HostsEntry - Constructors' {
     $Entry = [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
 
     it 'IP address should be correct' {
-        $Entry.Ipaddress | Should be "138.190.39.52"
+      $Entry.Ipaddress | Should be "138.190.39.52"
     }
 
     it 'HostName should be correct' {
-        $Entry.HostName | Should be "District234"
+      $Entry.HostName | Should be "District234"
     }
 
     it 'FullQuallifiedName should be correct' {
-        $Entry.FullQuallifiedName | Should be "District234.powershelldistrict.com"
+      $Entry.FullQuallifiedName | Should be "District234.powershelldistrict.com"
     }
 
     it 'Description should be correct' {
-        $Entry.Description | Should be "Woop "
+      $Entry.Description | Should be "Woop "
     }
     
     it 'EntryType should be of type Entry' {
-        $Entry.EntryType | Should be "Entry"
+      $Entry.EntryType | Should be "Entry"
     }
   }
 
@@ -120,23 +120,23 @@ Describe 'HostsEntry - Constructors' {
     $Entry = [HostsEntry]::new("#138.190.39.52		District234		District234.powershelldistrict.com #Woop")
 
     it 'IP address should be correct' {
-        $Entry.Ipaddress | Should be "138.190.39.52"
+      $Entry.Ipaddress | Should be "138.190.39.52"
     }
 
     it 'HostName should be correct' {
-        $Entry.HostName | Should be "District234"
+      $Entry.HostName | Should be "District234"
     }
 
     it 'FullQuallifiedName should be correct' {
-        $Entry.FullQuallifiedName | Should be "District234.powershelldistrict.com"
+      $Entry.FullQuallifiedName | Should be "District234.powershelldistrict.com"
     }
 
     it 'Description should be correct' {
-        $Entry.Description | Should be "Woop "
+      $Entry.Description | Should be "Woop "
     }
     
     it 'EntryType should be of type Comment' {
-        $Entry.EntryType | Should be "Comment"
+      $Entry.EntryType | Should be "Comment"
     }
   }
 
@@ -144,23 +144,23 @@ Describe 'HostsEntry - Constructors' {
     $Entry = [HostsEntry]::new("All Primary Servers",[HostsEntryType]::comment)
 
     it 'IP address should be empty' {
-        $Entry.Ipaddress | Should benullorempty
+      $Entry.Ipaddress | Should benullorempty
     }
 
     it 'HostName should be empty' {
-        $Entry.HostName | Should benullorempty
+      $Entry.HostName | Should benullorempty
     }
 
     it 'FullQuallifiedName should be empty' {
-        $Entry.FullQuallifiedName | Should benullorempty
+      $Entry.FullQuallifiedName | Should benullorempty
     }
 
     it 'Description should contain correct values' {
-        $Entry.Description | Should be "All Primary Servers"
+      $Entry.Description | Should be "All Primary Servers"
     }
     
     it 'EntryType should be of type Comment' {
-        $Entry.EntryType | Should be "Comment"
+      $Entry.EntryType | Should be "Comment"
     }
   }
 
@@ -168,27 +168,45 @@ Describe 'HostsEntry - Constructors' {
     $Entry = [HostsEntry]::new()
 
     it 'IP address should be correct' {
-        $Entry.Ipaddress | Should benullorempty
+      $Entry.Ipaddress | Should benullorempty
     }
 
     it 'HostName should be correct' {
-        $Entry.HostName | Should benullorempty
+      $Entry.HostName | Should benullorempty
     }
 
     it 'FullQuallifiedName should be correct' {
-        $Entry.FullQuallifiedName | Should benullorempty
+      $Entry.FullQuallifiedName | Should benullorempty
     }
 
     it 'Description should be correct' {
-        $Entry.Description | Should benullorempty
+      $Entry.Description | Should benullorempty
     }
     
     it 'EntryType should be of type Entry' {
-        $Entry.EntryType | Should be "BlankLine"
+      $Entry.EntryType | Should be "BlankLine"
     }
   }
   
+  Context 'Testing Constructors: Passing Wrong data types'{
+  
+    it 'Constructor single String: Bad IP address should throw an error'{
+
+      {[HostsEntry]::New("403.3.5.8		steph		svg.powershelldistrict.com")} | should throw
+
+    }
+    
+    it 'Constructor Ip address, String, String,String: Bad IP address should throw an error'{
+
+      {[HostsEntry]::New("392.168.2.1","Woop","Woop.wap.com","plop")} | should throw
+
+    }
+  
+  }
+  
 } -Tag "Constructors"
+
+
 
 # describes the function HostsFile
 
@@ -403,10 +421,15 @@ Describe 'HostsFile' {
   
   
       $HostFile.Backup()
+      Start-Sleep -Seconds 2
       $HostFile.Backup()
+      Start-Sleep -Seconds 1
       $HostFile.Backup()
+      Start-Sleep -Seconds 2
       $HostFile.Backup()
+      Start-Sleep -Seconds 1
       $HostFile.Backup()
+      Start-Sleep -Seconds 2
       $HostFile.Backup()
       
       $items = Get-ChildItem -Path $BackupFolderItem.FullName -Filter "*.bak"
