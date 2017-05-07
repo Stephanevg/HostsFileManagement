@@ -41,7 +41,7 @@ Class HostsEntry{
     $this.EntryType = $Type
   }
 
-  HostsEntry([string]$Line){
+  hidden HostsEntry([string]$Line){
     $Type = [HostsEntry]::GetLineType($Line)
 
 
@@ -222,7 +222,7 @@ Class HostsFile{
     
   }
   
-  [void]RemoveHostEntry([HostsEntry[]]$entries){
+  [void]RemoveHostsEntry([HostsEntry[]]$entries){
     $NewStructure = @() 
     $found = $false  
     
