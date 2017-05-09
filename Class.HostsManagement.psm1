@@ -198,7 +198,7 @@ Class HostsFile{
     if ($this.Entries){
       return $this.Entries
     }else{
-      throw "No entries present. Load a Hosts file first using the 'ReadHostsFileContent()' method."
+      throw "No entries present. Load a Hosts file first using the 'ReadHostsFileContent()' method, or use the add() method to add entries to the Hosts file that seems to be empty."
     }
   }
   
@@ -315,18 +315,23 @@ Class HostsFile{
 
     }
   }
-
+  <#
   [void]Set(){
     
     if($this.Entries){
       $this.Backup()
-      Set-Content -Value "" -Path $this.Path -Encoding Ascii
+      #write-warning "Waiting 3 seconds"
+      #Start-Sleep -Seconds 3
+      #Set-Content -Value "" -Path $this.Path -Encoding Ascii
+
+     ("") | >> $this.Path -Encoding Ascii
       #$this.AddHostsEntry($this.Entries)
       
       
 
       foreach ($entry in $this.Entries){
         [string]$FullLine = ""
+        #start-sleep -Seconds 1
         switch($entry.EntryType){
           "Comment"{
                  
@@ -405,7 +410,8 @@ Class HostsFile{
       
         try{
           write-verbose "Adding: $($fullLine) to $($this.path)"
-          $fullLine | Add-Content -Path $this.Path -ErrorAction stop
+          Start-Sleep -Milliseconds 70
+          ($fullLine) | >> $this.Path -ErrorAction stop
           
         }catch{
           write-warning "$_"
@@ -419,5 +425,127 @@ Class HostsFile{
       write-warning "No entries to set."
     }
   }
+  #>
+   [void]Set(){
+    
+    if($this.Entries){
+      $this.Backup()
+      #write-warning "Waiting 3 seconds"
+      #Start-Sleep -Seconds 3
+      #Set-Content -Value "" -Path $this.Path -Encoding Ascii
+      $stream = [System.IO.StreamWriter]::new($this.Path,$false)
+     #("") | Set-Content -Path $this.Path -Encoding Ascii
+     
+      #$this.AddHostsEntry($this.Entries)
+      
+      
+
+      foreach ($entry in $this.Entries){
+        [string]$FullLine = ""
+        #start-sleep -Seconds 1
+        switch($entry.EntryType){
+          "Comment"{
+                 
+            if (![string]::IsNullOrWhiteSpace($entry.Ipaddress.IPAddressToString)){
+
+              $FullLine += $entry.Ipaddress.IPAddressToString
+
+            }
+
+            if (![string]::IsNullOrWhiteSpace($entry.HostName)){
+
+              $FullLine += "`t`t" + $entry.hostname 
+
+            }
+
+            if (![string]::IsNullOrWhiteSpace($entry.FullQuallifiedName)){
+              $FullLine += "`t`t" + $entry.FullQuallifiedName  
+
+            }
+
+            if (![string]::IsNullOrWhiteSpace($entry.Description)){
+              if ($entry.Ipaddress.IpAddressToString){
+                $FullLine += "`t`t" + "#" + $entry.Description
+              }else{
+                if ($fullLine -match '^#.+'){
+                  $fullLine += "`t`t" + $entry.Description
+                }else{
+                  $FullLine += $entry.Description
+                }
+              }
+               
+            }
+
+            $fullLine = "#" + $FullLine
+
+          ;Break}
+          "BlankLine"{
+            if ($entry.IsComment -eq $true){
+                    
+              $fullLine = "#"
+            }else{
+              #$fullLine = "`r`n"
+              $fullLine = ""
+            }
+          ;Break}
+          "Entry"{
+            if (![string]::IsNullOrWhiteSpace($entry.Ipaddress.IPAddressToString)){
+
+              $FullLine += $entry.Ipaddress.IPAddressToString
+
+            }
+
+            if (![string]::IsNullOrWhiteSpace($entry.HostName)){
+
+              $FullLine += "`t`t" + $entry.hostname 
+
+            }
+
+            if (![string]::IsNullOrWhiteSpace($entry.FullQuallifiedName)){
+              $FullLine += "`t`t" + $entry.FullQuallifiedName  
+
+            }
+
+            if (![string]::IsNullOrWhiteSpace($entry.Description)){
+
+              $fullLine += "`t`t" + "# "+ $entry.Description
+                
+               
+            }
+          ;Break}#End Switch Entry
+        }
+
+
+      
+        #$fullLine += "`r`n"
+      
+        try{
+          write-verbose "Adding: $($fullLine) to $($this.path)"
+          #Start-Sleep -Milliseconds 70
+
+          
+
+            $stream.WriteLine($FullLine)
+
+
+
+
+          #$fullLine | Add-Content -Path $this.Path -ErrorAction stop
+          
+        }catch{
+          write-warning "$_"
+          
+        }
+      
+      
+      }#endforeach
+
+      $stream.close()
+
+    }else{
+      write-warning "No entries to set."
+    }
+  }
+
 
 }
