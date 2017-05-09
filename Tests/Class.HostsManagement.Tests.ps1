@@ -439,5 +439,14 @@ Describe 'HostsFile' {
     }
 
   }
+
+  Context 'Persisting data to disk -  Writing data to Hosts file'{
+  
+    it "Should write file to disk using .Set() Method"{
+        $HostFile.set()
+        write-host "woop"
+    }
+
+  } -Tag "Persist"
 }
 
