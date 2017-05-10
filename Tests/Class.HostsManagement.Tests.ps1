@@ -442,9 +442,58 @@ Describe 'HostsFile' {
 
   Context 'Persisting data to disk -  Writing data to Hosts file'{
   
+    $Entries = @()
+    $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
+    $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
+    $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
+    
+    $HostFile.AddHostsEntry($Entries)
+    
+    
+
     it "Should write file to disk using .Set() Method"{
         $HostFile.set()
-        write-host "woop"
+        Test-Path $HostFile.Path | should be $true
+    }
+
+    it " Hosts file should be present and not null or empty"{
+
+        gc $HostFile.Path | should not benullorempty
+    }
+
+    it "Data added through the Add tests should have been persisted into file: IP 138.190.39.52"{
+        
+        $HostFile.ReadHostsFileContent()
+        $AllEntries = $HostFile.GetEntries()
+        $AllEntries | ? {$_.IpAddress -eq "138.190.39.52"} | should be $true
+    }
+
+    it "Data added through the Add tests should have been persisted into file: IP 138.190.39.53"{
+        
+        $HostFile.ReadHostsFileContent()
+        $AllEntries = $HostFile.GetEntries()
+        $AllEntries | ? {$_.IpAddress -eq "138.190.39.53"} | should be $true
+    }
+
+    it "Data added through the Add tests should have been persisted into file: IP 138.190.39.54"{
+        
+        $HostFile.ReadHostsFileContent()
+        $AllEntries = $HostFile.GetEntries()
+        $AllEntries | ? {$_.IpAddress -eq "138.190.39.54"} | should be $true
+    }
+
+    it "Data deleted through the delete tests should not have been persisted into file: IP 1.2.3.7"{
+        
+        $HostFile.ReadHostsFileContent()
+        $AllEntries = $HostFile.GetEntries()
+        $AllEntries | ? {$_.IpAddress -eq "1.2.3.7"} | should benullOrEmpty
+    }
+
+    it "Data deleted through the delete tests should not have been persisted into file: IP 1.2.3.5"{
+        
+        $HostFile.ReadHostsFileContent()
+        $AllEntries = $HostFile.GetEntries()
+        $AllEntries | ? {$_.IpAddress -eq "1.2.3.5"} | should benullOrEmpty
     }
 
   } -Tag "Persist"
