@@ -1,10 +1,4 @@
-﻿
-#. ($PSCommandPath -replace '\.tests\.ps1$', '.ps1')
-
-$here = (Split-Path -Parent $MyInvocation.MyCommand.Path) -replace "Tests",""
-$MyInvocation.MyCommand.Path
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '.Tests', ''
-. (join-Path -Path $here -ChildPath $sut)
+﻿using module ..\Class.HostsManagement.psd1 #Assuming that the tests are located in the \tests folder in the module directory.
 
 
 # describes the function HostsEntry
@@ -440,8 +434,58 @@ Describe 'HostsFile' {
 
   }
 
-  Context 'Persisting data to disk -  Writing data to Hosts file'{
   
+} -tag "Hostsfile"
+
+Describe 'Testing Persistance Options' {
+    
+    $HostsData = @'
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
+
+# All platform servers
+192.168.1.2    wip wip.wop.wap
+1.2.3.5		plop             plop.powershelldistrict.com             
+1.2.3.6		wap wap.fop.lop
+1.2.3.4		wap		wap.fop.lop
+2.2.2.2		svg		plop
+
+
+#Domain Controllers
+1.2.3.7		dc01		dc01.powershelldistrict.com
+
+
+'@
+  $HostsFilePath =  join-path -Path $testDrive -ChildPath "Hosts"
+  $HostsData | Out-File -FilePath $HostsFilePath -Encoding ascii
+    
+  $item = Get-Item -Path $HostsFilePath
+  $HostFile = [HostsFile]::New($item)
+  $HostFile.ReadHostsFileContent()
+
+    Context 'Persisting data to disk -  Writing data to Hosts file'{
+  
+    
+
     $Entries = @()
     $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
     $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
@@ -449,14 +493,20 @@ Describe 'HostsFile' {
     
     $HostFile.AddHostsEntry($Entries)
     
+    #The Following entries are already present in the fake host file created at the begin of the describe block.
+    $EntriesToDelete = @()
+    $EntriesToDelete += [HostsEntry]::new("1.2.3.7","dc01","dc01.powershelldistrict.com","",[HostsEntryType]::Entry)
+    $EntriesToDelete += [HostsEntry]::new("1.2.3.5		plop             plop.powershelldistrict.com   ")
     
+    
+    $HostFile.RemoveHostsEntry($EntriesToDelete)
 
     it "Should write file to disk using .Set() Method"{
         $HostFile.set()
         Test-Path $HostFile.Path | should be $true
     }
 
-    it " Hosts file should be present and not null or empty"{
+    it "Hosts file should be present and not null or empty"{
 
         gc $HostFile.Path | should not benullorempty
     }
@@ -496,6 +546,11 @@ Describe 'HostsFile' {
         $AllEntries | ? {$_.IpAddress -eq "1.2.3.5"} | should benullOrEmpty
     }
 
-  } -Tag "Persist"
-}
+    it 'dummy'{
+        notepad $HostFile.Path
+        write-host "woop"
+    }
+
+  }
+} -Tag "Persistence"
 
