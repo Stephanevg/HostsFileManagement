@@ -490,7 +490,7 @@ Describe 'Testing Persistance Options' {
     $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
     $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
     $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
-    
+    $Entries += [HostsEntry]::New("visit powershellDistrict for powershell related information",[HostsEntryType]::Comment)
     $HostFile.AddHostsEntry($Entries)
     
     #The Following entries are already present in the fake host file created at the begin of the describe block.
@@ -546,9 +546,15 @@ Describe 'Testing Persistance Options' {
         $AllEntries | ? {$_.IpAddress -eq "1.2.3.5"} | should benullOrEmpty
     }
 
-    it 'dummy'{
-        notepad $HostFile.Path
-        write-host "woop"
+    it 'Comment Should be located in file: Object verification (Entry existing and of type comment)' {
+        $HostFile.ReadHostsFileContent()
+        $Allentries = $HostFile.GetEntries()
+        $Allentries | ? {$_.description -eq 'visit powershellDistrict for powershell related information' -and $_.EntryType -eq [HostsEntryType]::Comment}
+    }
+
+    it 'Comment Should be located in file: Should start with "# and contain personalized message"' {
+        
+        (select-string -Path $HostFile.Path -Pattern "#visit powershellDistrict for powershell related information") | should not be nullorempty
     }
 
   }
