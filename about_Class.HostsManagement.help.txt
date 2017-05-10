@@ -155,8 +155,26 @@ EXAMPLES
 
   
   #Persist changes to file
+    All Hosts entries added and removed are only done in memory. To persist the change to disk (to write the entries back to the HostsFile) use the .Set() Method.
     $HostFile.Set()
 
+  #This is a complete example that add's removes, and persists changes to disk
+    
+    $HostsFile = [HostsFile]::new()         
+    $HostsFile.ReadHostsFileContent()
+
+    $Entries = @()
+    $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
+    $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
+    $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
+    
+    $HostFile.AddHostsEntry($Entries)  
+
+    $HostsFile.Set()
+
+    $HostsFile.ReadHostsFileContent()
+
+    $HostsFile.GetEntries()
 
 KEYWORDS
     Class hosts
