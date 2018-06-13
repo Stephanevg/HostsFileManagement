@@ -80,16 +80,15 @@ The structure of an object that this module would get/generate is the following:
 ## EXAMPLES
 
 ## Prerequisites: Loading the module
-  ### Load the module (if module located in path contained in $Env:PSmodulepath)
-    ```powershell
+### Load the module (if module located in path contained in $Env:PSmodulepath)
+```powershell
     Using module ClassHostsManagement.psd1
-    ```
+```
 
-  ### Load the module (if module **not** located in path contained in $Env:PSmodulepath)
-
-    ```powershell
+### Load the module (if module **not** located in path contained in $Env:PSmodulepath)
+```powershell
     Using module <PathToFile>\ClassHostsManagement.psd1
-    ```
+```
 ## Reading Entries
 
   ## Reading HostsFile entries (Constructor -> [HostsFile]::())
@@ -122,7 +121,8 @@ The structure of an object that this module would get/generate is the following:
     $HostsFile.Backup() #Creates a backup of the current data located into memory (Entries) respecting the following format: YYYYMMDD-HHmmss_Hosts.bak
 ```
   ## Creating a backup of local hosts file and save to alternate location
-    ## Use this method create a backp of the HOSTS file content located in memory (Visible Through getEntries()) to a seperate location. 
+
+    Use this method create a backp of the HOSTS file content located in memory (Visible Through getEntries()) to a seperate location. 
 
 ```powershell
 
@@ -171,7 +171,8 @@ $Entry = [HostsEntry]::new()
 ```powershell
     $Entry = [HostsEntry]::new("All Primary Servers",[HostsEntryType]::comment)
 ```
-    Effective line in HOSTS file (Once Added):
+
+Effective line in HOSTS file (Once Added):
       ```#All primary Servers```
 
 ## Adding Entries:
