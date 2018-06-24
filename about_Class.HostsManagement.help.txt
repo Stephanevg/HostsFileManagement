@@ -16,7 +16,7 @@ LONG DESCRIPTION
 
     - HostsEntry (Class)
       Represents an instance of a HOSTS file entry (a simple line of a HOSTS file).
-      
+
     - HostsEntryType (Enum)
       Represents the type of the HOSTS Entry line.
 
@@ -32,7 +32,7 @@ LONG DESCRIPTION
       The difference classes (and Enum(s)) represent the logical structure of a HOSTS file and it's content.
       A HostsFile points to a file (which is by default, but not necessarly, located at "c:\System32\drivers\etc\hosts").
       The HostsFile contains several entries (or lines). Each Hosts file entry is an object that can be of one of these different types (which are grouped together in the 'HostsEntryType' Enum).
-      
+
       Entry:
       It can be a regular entry. It links an IP address to a HostsName, and a Full qualified name. Additionnaly, it can have a comment at the end to give additional information about the entry.
 
@@ -63,21 +63,21 @@ LONG DESCRIPTION
 EXAMPLES
 
   #Load the module (if module located in path contained in $psmodulepath)
-    Using module ClassHostsManagement.psd1
+    Using module Class.HostsManagement.psd1
 
   #Load the module (if module located in path contained in $psmodulepath)
-    Using module <PathToFile>\ClassHostsManagement.psd1
+    Using module <PathToFile>\Class.HostsManagement.psd1
 
 ###Reading Entries
 
   #Reading HostsFile entries (Constructor -> [HostsFile]::())
-    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
+    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.
     $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
     $HostsFile.GetEntries() #Display all entries loaded into memory.
 
   #Reading HostsFile entries from alternate path (Constructor -> [HostsFile]::($Item [System.IO.FileSystemInfo]))
     $Item = Get-Item "C:\MyFiles\Backups\20170418-143835_Hosts.bak"
-    $HostsFile = [HostsFile]::new($Item) #Loads a backup HOSTS file into memory. Needs variable of type System.IO.FileSystemInfo.       
+    $HostsFile = [HostsFile]::new($Item) #Loads a backup HOSTS file into memory. Needs variable of type System.IO.FileSystemInfo.
     $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
     $HostsFile.GetEntries() #Display all entries loaded into memory.
 
@@ -90,13 +90,13 @@ EXAMPLES
 
   #How to create a backup of current hosts file (Default location)
     ##The backup will be created in the same folder that holds the current HOSTS folder (defined through the Path Property).
-    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
+    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.
     $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
     $HostsFile.Backup() #Creates a backup of the current data located into memory (Entries) respecting the following format: YYYYMMDD-HHmmss_Hosts.bak
 
   #How to create a backup of current hosts file (Alternate location)
-    ## Use this method create a backp of the HOSTS file content located in memory (Visible Through getEntries()) to a seperate location. 
-    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.         
+    ## Use this method create a backp of the HOSTS file content located in memory (Visible Through getEntries()) to a seperate location.
+    $HostsFile = [HostsFile]::new()  #Loads the path to the local HOSTS file into memory.
     $HostsFile.ReadHostsFileContent() # Loads all the entries into memory in a hidden property called "Entries".
     $folder = Get-Item -Path C:\Temp\backup
     $HostsFile.Backup($Folder)
@@ -110,7 +110,7 @@ EXAMPLES
     $Description = "Awesome Server"
     $Entry = [HostsEntry]::new($IpAddress,$HostName,$fqdn,$Description,[HostsEntryType]::Entry)
 
-    #Effective line in HOSTS file: 
+    #Effective line in HOSTS file:
       192.168.2.1		Computer01		Computer01.powershelldistrict.com #Awesome Server
 
   #Creating a HOSTS comment (HostsTypeEntry -eq Comment)
@@ -120,40 +120,40 @@ EXAMPLES
     $Description = "This line is commented out"
     $Entry = [HostsEntry]::new($IpAddress,$HostName,$fqdn,$Description,[HostsEntryType]::Comment)
 
-    #Effective line in HOSTS file: 
+    #Effective line in HOSTS file:
       #192.168.2.2		Computer02		Computer02.powershelldistrict.com #This line is commented out
 
   #Creating a blank line
     $Entry = [HostsEntry]::new()
-   
+
   #Creating a line containing only a comment (section / title purposes)
     $Entry = [HostsEntry]::new("All Primary Servers",[HostsEntryType]::comment)
 
     #Effective line in HOSTS file:
       #All primary Servers
 
-###Adding Entries 
+###Adding Entries
 
   #Adding entries to the HostsFile
     $Entries = @()
     $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
     $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
     $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
-    
+
     $HostFile.AddHostsEntry($Entries)
 
-###Removing Entries 
+###Removing Entries
 
   #Removing Hosts entries
     $Entries = @()
-    
+
     $Entries += [HostsEntry]::new("1.2.3.7","dc01","dc01.powershelldistrict.com","",[HostsEntryType]::Entry)
     $Entries += [HostsEntry]::new("1.2.3.5		plop             plop.powershelldistrict.com   ")
-    
+
     $HostFile.ReadHostsFileContent()
     $HostFile.RemoveHostEntry($Entries)
 
-  
+
   #Persist changes to file
     All Hosts entries added and removed are only done in memory. To persist the change to disk (to write the entries back to the HostsFile) use the .Set() Method.
     $HostFile.Set()
@@ -180,4 +180,4 @@ KEYWORDS
     Class hosts
 
 SEE ALSO
-    powershelldistrict -> search for hosts 
+    powershelldistrict -> search for hosts
