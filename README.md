@@ -233,3 +233,9 @@ $HostFile.Set()
 
     $HostsFile.GetEntries()
 ```
+
+## Class diagram
+
+This module is class based, see here the Class Diagram.
+
+![ClassDiagram](/images/Class.HostsManagement.png)
