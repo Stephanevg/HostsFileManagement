@@ -1,18 +1,27 @@
 Function Get-HFMHostsfile {
     <#
     .SYNOPSIS
-        Short description
+        Get the hosts file of the desired hostname.
     .DESCRIPTION
-        Long description
+        Get the hostfile of the desired hostname.
+        By default the localhost hosts file is fetched. You can specify a remote computer name.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Get-HFMHostsfile
+        Return a [HostsFile] object representing the local hosts file.
+    .EXAMPLE
+        PS C:\> Get-HFMHostsfile -Name Computer1
+        Return a [HostsFile] object representing the hosts file of Computer1.
+    .EXAMPLE
+        PS C:\> "Computer1","Computer2" | Get-HFMHostsfile
+        Return an array of [HostsFile] objects representing the hosts file of Computer1 and Computer2.
     .INPUTS
-        Inputs (if any)
+        Input String.
     .OUTPUTS
-        Output (if any)
+        Return [HostsFile] Object(s).
     .NOTES
-        General notes
+        This cmdlet uses Class.HostsManagement classes, by @StephaneVG
+        Fork hist project if you like it: https://github.com/Stephanevg/Class.HostsManagement
+        Visit his site, and read his article a boute pratical use of PowerShell Classes: http://powershelldistrict.com/powershell-class/
     #>
 
     [CmdletBinding()]
@@ -39,18 +48,22 @@ Function Get-HFMHostsfile {
 Function Get-HFMHostsFileContent {
     <#
     .SYNOPSIS
-        Short description
+        Read the Host file content.
     .DESCRIPTION
-        Long description
+        Read the Host file content. Take input from Get-HFMHostsFile.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> $a = Get-HFMHostsFile
+        PS C:\> Get-HFMHostsFileContent -Path $a
+        Use Get-HFMHostsFile to get a [HostsFile] object
+        Use Get-HFMHostFileContent to return a [HostsEntry] object(s)
     .INPUTS
-        Inputs (if any)
+        Input must be of type [HostsFile].
     .OUTPUTS
-        Output (if any)
+        Return [HostsEntry] Object(s).
     .NOTES
-        General notes
+        This cmdlet uses Class.HostsManagement classes, by @StephaneVG
+        Fork hist project if you like it: https://github.com/Stephanevg/Class.HostsManagement
+        Visit his site, and read his article a boute pratical use of PowerShell Classes: http://powershelldistrict.com/powershell-class/
     #>
 
     [CmdletBinding()]
@@ -69,107 +82,3 @@ Function Get-HFMHostsFileContent {
 
     END {}
 }
-
-Function New-HFMHostsFileEntry {
-    <#
-    .SYNOPSIS
-        Short description
-    .DESCRIPTION
-        Long description
-    .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
-    .INPUTS
-        Inputs (if any)
-    .OUTPUTS
-        Output (if any)
-    .NOTES
-        General notes
-    #>
-
-    [CmdletBinding()]
-    Param
-    (
-        ## regex to match ip
-        [Parameter(Mandatory=$False)]
-        [String]$IpAddress,
-        ## regex, no space etc..
-        [Parameter(Mandatory=$False)]
-        [String]$HostName,
-        [Parameter(Mandatory=$False)]
-        [String]$FullyQualifiedName,
-        [Parameter(Mandatory=$False)]
-        [String]$Description,
-        [ValidateSet("Entry","Comment","BlankLine")]
-        [Parameter(Mandatory=$True)]
-        [String]$EntryType
-    )
-
-    Switch ($EntryType) {
-        BlankLine {
-            return [HostsEntry]::New()
-        }
-
-        Comment {
-            return [HostsEntry]::New($IpAddress,$HostName,$FullyQualifiedName,$Description,[HostsEntryType]::Comment)
-        }
-
-        Entry {
-            return [HostsEntry]::New($IpAddress,$HostName,$FullyQualifiedName,$Description,[HostsEntryType]::Entry)
-        }
-    }
-}
-
-Function Set-HFMHostsFileEntry {
-    <#
-     # Need Testing, hostfile is backedup and re-created
-     #>
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = 'High')]
-    Param
-    (
-        [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-        [HostsFile[]]$Path,
-        [Parameter(Mandatory=$True)]
-        [HostsEntry[]]$Entry
-
-    )
-
-    BEGIN{}
-
-    PROCESS{
-        If ($PSCmdlet.ShouldProcess($Path)) {
-            Write-Output 'Your hosts file will be backedup and re-created with the specified entries...'
-        }
-        $Path.AddHostsEntry($Entry)
-        $Path.Set()
-    }
-
-    END{}
-}
-
-<#
-    New-HFMHostsFileEntry -> Creates an HostFileEntry object (Of type [HostsEntry])
-    Set-HFMHostsFileEntry
-    Set-HFMHostsFileEntry ->
-    Save-HFMHostFileEntry
-    New-HFMHostsFileBackup
-#>
-
-<#
-Example 1:
-$a = Get-HFMHostsfile -ComputerName Localhost
-Get-HFMHostsFileContent -Path $a
-
-Example 2:
-$a = Get-HFMHostsfile
-Get-HFMHostsFileContent $a
-
-Example 3
-Get-HFMHostsfile | Get-HFMHostsFileContent
-
-Example 4
-"localhost" | Get-HFMHostsfile | Get-HFMHostsFileContent
-#>
-
-
-
