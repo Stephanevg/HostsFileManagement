@@ -26,7 +26,7 @@ LONG DESCRIPTION
         |--> [HostsEntry]
         |--> [HostsEntry]
         |--> [HostsEntry]
-        |--> [HostsentryType]
+                    |--> [HostsentryType]
 
       The difference classes (and Enum(s)) represent the logical structure of a HOSTS file and it's content.
       A HostsFile points to a file (which is by default, but not necessarly, located at "c:\System32\drivers\etc\hosts").
