@@ -1,6 +1,5 @@
 ﻿
-Import-Module -Force $PSScriptRoot\..\HostsFileManagement\HostsFileManagement.psd1
-
+Import-Module -Force $PSScriptRoot\..\HostsFileManagement.psd1
 
 InModuleScope HostsFileManagement {
 
@@ -211,38 +210,38 @@ InModuleScope HostsFileManagement {
     Context 'Loading external Hosts file'   {
 
 $HostsData = @'
-  # Copyright (c) 1993-2009 Microsoft Corp.
-  #
-  # This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
-  #
-  # This file contains the mappings of IP addresses to host names. Each
-  # entry should be kept on an individual line. The IP address should
-  # be placed in the first column followed by the corresponding host name.
-  # The IP address and the host name should be separated by at least one
-  # space.
-  #
-  # Additionally, comments (such as these) may be inserted on individual
-  # lines or following the machine name denoted by a '#' symbol.
-  #
-  # For example:
-  #
-  #      102.54.94.97     rhino.acme.com          # source server
-  #       38.25.63.10     x.acme.com              # x client host
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
   
-  # localhost name resolution is handled within DNS itself.
-  #	127.0.0.1       localhost
-  #	::1             localhost
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
   
-  # All platform servers
-  192.168.1.2    wip wip.wop.wap
-  1.2.3.5		plop             plop.powershelldistrict.com             
-  1.2.3.6		wap wap.fop.lop
-  1.2.3.4		wap		wap.fop.lop
-  2.2.2.2		svg		plop
+# All platform servers
+192.168.1.2    wip wip.wop.wap
+1.2.3.5		plop             plop.powershelldistrict.com             
+1.2.3.6		wap wap.fop.lop
+1.2.3.4		wap		wap.fop.lop
+2.2.2.2		svg		plop
   
   
-  #Domain Controllers
-  1.2.3.7		dc01		dc01.powershelldistrict.com
+#Domain Controllers
+1.2.3.7		dc01		dc01.powershelldistrict.com
 
 '@
     $HostsFilePath =  join-path -Path $testDrive -ChildPath "Hosts2"
@@ -310,6 +309,52 @@ $HostsData = @'
     }
     
     Context 'Testing Adding Entries'{
+
+
+    
+$HostsData = @'
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+  
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
+  
+# All platform servers
+192.168.1.2    wip wip.wop.wap
+1.2.3.5		plop             plop.powershelldistrict.com             
+1.2.3.6		wap wap.fop.lop
+1.2.3.4		wap		wap.fop.lop
+2.2.2.2		svg		plop
+  
+  
+#Domain Controllers
+1.2.3.7		dc01		dc01.powershelldistrict.com
+
+'@
+    $HostsFilePath =  join-path -Path $testDrive -ChildPath "Hosts2"
+    $HostsData | Out-File -FilePath $HostsFilePath -Encoding ascii
+  
+    
+    $item = Get-Item -Path $HostsFilePath
+    $HostFile = [HostsFile]::New($item)
+
+
       $Entries = @()
       $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
       $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
@@ -354,6 +399,56 @@ $HostsData = @'
     
     Context 'Testing Removing Entries'{
       
+          
+$HostsData = @'
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+  
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
+  
+# All platform servers
+192.168.1.2    wip wip.wop.wap
+1.2.3.5		plop             plop.powershelldistrict.com             
+1.2.3.6		wap wap.fop.lop
+1.2.3.4		wap		wap.fop.lop
+2.2.2.2		svg		plop
+  
+  
+#Domain Controllers
+1.2.3.7		dc01		dc01.powershelldistrict.com
+
+'@
+    $HostsFilePath =  join-path -Path $testDrive -ChildPath "Hosts2"
+    $HostsData | Out-File -FilePath $HostsFilePath -Encoding ascii
+  
+    
+    $item = Get-Item -Path $HostsFilePath
+    $HostFile = [HostsFile]::New($item)
+
+
+      $Entries = @()
+      $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
+      $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
+      $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
+      
+
       $Entries = @()
       
       $Entries += [HostsEntry]::new("1.2.3.7","dc01","dc01.powershelldistrict.com","",[HostsEntryType]::Entry)
@@ -382,6 +477,56 @@ $HostsData = @'
     
     Context 'Testing Backup Methods'{
     
+        
+$HostsData = @'
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+  
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
+  
+# All platform servers
+192.168.1.2    wip wip.wop.wap
+1.2.3.5		plop             plop.powershelldistrict.com             
+1.2.3.6		wap wap.fop.lop
+1.2.3.4		wap		wap.fop.lop
+2.2.2.2		svg		plop
+  
+  
+#Domain Controllers
+1.2.3.7		dc01		dc01.powershelldistrict.com
+
+'@
+    $HostsFilePath =  join-path -Path $testDrive -ChildPath "Hosts2"
+    $HostsData | Out-File -FilePath $HostsFilePath -Encoding ascii
+  
+    
+    $item = Get-Item -Path $HostsFilePath
+    $HostFile = [HostsFile]::New($item)
+
+
+      $Entries = @()
+      $Entries += [HostsEntry]::new("138.190.39.52		District234		District234.powershelldistrict.com #Woop")
+      $Entries += [HostsEntry]::new("138.190.39.53		District235		District235.powershelldistrict.com #Woop")
+      $Entries += [HostsEntry]::new("138.190.39.54		District236		District236.powershelldistrict.com #Woop")
+      
+
       it 'Should create a backup' {
         $HostFile.Backup()
         $BackupFolder = split-Path -Path $HostsFilePath -Parent
@@ -444,39 +589,38 @@ $HostsData = @'
   Describe 'Testing Persistance Options' {
       
       $HostsData = @'
-  # Copyright (c) 1993-2009 Microsoft Corp.
-  #
-  # This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
-  #
-  # This file contains the mappings of IP addresses to host names. Each
-  # entry should be kept on an individual line. The IP address should
-  # be placed in the first column followed by the corresponding host name.
-  # The IP address and the host name should be separated by at least one
-  # space.
-  #
-  # Additionally, comments (such as these) may be inserted on individual
-  # lines or following the machine name denoted by a '#' symbol.
-  #
-  # For example:
-  #
-  #      102.54.94.97     rhino.acme.com          # source server
-  #       38.25.63.10     x.acme.com              # x client host
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
   
-  # localhost name resolution is handled within DNS itself.
-  #	127.0.0.1       localhost
-  #	::1             localhost
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
   
-  # All platform servers
-  192.168.1.2    wip wip.wop.wap
-  1.2.3.5		plop             plop.powershelldistrict.com             
-  1.2.3.6		wap wap.fop.lop
-  1.2.3.4		wap		wap.fop.lop
-  2.2.2.2		svg		plop
+# All platform servers
+192.168.1.2    wip wip.wop.wap
+1.2.3.5		plop             plop.powershelldistrict.com             
+1.2.3.6		wap wap.fop.lop
+1.2.3.4		wap		wap.fop.lop
+2.2.2.2		svg		plop
   
   
-  #Domain Controllers
-  1.2.3.7		dc01		dc01.powershelldistrict.com
-  
+#Domain Controllers
+1.2.3.7		dc01		dc01.powershelldistrict.com
   
 '@
     $HostsFilePath =  join-path -Path $testDrive -ChildPath "Hosts"
