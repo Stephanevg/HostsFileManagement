@@ -1,4 +1,3 @@
-
 Manage local and remote Hosts file(s) using Powershell.
 
 This modules helps to read, parse, save, edit, and backup your local or remote HOSTS file.
@@ -6,11 +5,9 @@ The main advantage of this module is that it makes converts the 'unstructured' H
 It becomes easy to filter a HOSTS file to find entries that are double, incorrect, or that need to be deleted.
 New entries can easily be added as well.
 
-
 ## Read my blog post about the details:
 
 If you are interested in the details of this module, want to learn about it's history, and improve your knowledge about powershell classes, I have writen an extensive documentation on my blog. You can find it on [PowerShellDistrict-ManagingHostsFile](http://powershelldistrict.com/managing-hosts-file-using-powershell-classes/)
-
 
 ## Module composition:
 
@@ -23,13 +20,8 @@ Represents an instance of a HOSTS file entry (a simple line of a HOSTS file).
 
 - HostsEntryType (Enum)
 Represents the type of the HOSTS Entry line.
-
-
-
-
 The difference classes (and Enum(s)) represent the logical structure of a HOSTS file and it's content.
 A HostsFile points to a file (which is by default, but not necessarly, located at "c:\System32\drivers\etc\hosts".
-
 
 ## HostsFile Entries
 
@@ -146,7 +138,6 @@ The structure of an object that this module would get/generate is the following:
     #Effective line in HOSTS file: 
       ```192.168.2.1		Computer01		Computer01.powershelldistrict.com #Awesome Server```
 
-
 ### Creating a HOSTS comment (HostsTypeEntry -eq Comment)
 
 Creating a HostsEntry is the first step towards adding a HOSTS entry to your Local or remote Hosts file.
@@ -188,8 +179,6 @@ Adding entries to the HostsFile,allows to add HostsEntry items to be added to on
     
     $HostFile.AddHostsEntry($Entries)
 ```
-
-
 ## Removing Entries 
 
   ### Removing Hosts entries
