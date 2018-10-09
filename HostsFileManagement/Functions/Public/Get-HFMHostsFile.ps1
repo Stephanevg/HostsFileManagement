@@ -1,4 +1,4 @@
-Function Get-HFMHostsFile {
+Function Get-HFMHostsfile {
     <#
     .SYNOPSIS
         Get the hosts file of the desired hostname.
@@ -38,7 +38,9 @@ Function Get-HFMHostsFile {
         If ( !$ComputerName ) {
             return [HostsFile]::New()
         } Else {
-            Return [HostsFile]::New($ComputerName)
+            Foreach ( $Computer in $ComputerName ) {
+                Return [HostsFile]::New($Computer)
+            }
         }
     }
 
