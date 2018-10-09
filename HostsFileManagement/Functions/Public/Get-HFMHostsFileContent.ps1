@@ -1,4 +1,3 @@
-
 Function Get-HFMHostsFileContent {
     <#
     .SYNOPSIS
@@ -30,11 +29,11 @@ Function Get-HFMHostsFileContent {
     BEGIN {}
 
     PROCESS {
-        $Path.ReadHostsFileContent()
-        
+        Foreach ( $HostPath in $Path ) {
+            $HostPath.ReadHostsFileContent()
+            return $HostPath.GetEntries()
+        }
     }
 
-    END {
-        return $Path.GetEntries()
-    }
+    END {}
 }
