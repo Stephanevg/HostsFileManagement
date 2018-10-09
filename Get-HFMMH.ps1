@@ -176,7 +176,8 @@ Function Set-HFMHostsFileEntry {
     BEGIN{}
 
     PROCESS{
-        Foreach ($File in $Path ) {
+
+        Foreach ($File in $path ) {
             $File.ReadHostsFileContent()
             $File.AddHostsEntry($Entries)
             $File.Set()
@@ -185,18 +186,3 @@ Function Set-HFMHostsFileEntry {
 
     END{}
 }
-
-<#
-Remove-Module Get-HFMMH;Import-Module .\Get-HFMMH.ps1;
-$h = Get-HFMHostsfile
-$n = New-HFMHostsFileEntry -IpAddress "20.0.0.0" -HostName "toto" -FullyQualifiedName "toto.com" -Description "ahahha" -EntryType Comment
-$m = New-HFMHostsFileEntry -IpAddress "21.0.0.0" -HostName "toto" -FullyQualifiedName "toto.com" -Description "ahahha" -EntryType Comment
-Set-HFMHostsFileEntry -Path $h -Entries $n,$m
-
-$h.GetEntries()
-$h.addHostEntries()
-$h.set()
-
-"DFT2-336449","L-FRA-370397" | Get-HFMHostsfile | Set-HFMHostsFileEntry -Entries $n,$m
-
-#>
