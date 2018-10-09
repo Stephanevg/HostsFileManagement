@@ -38,7 +38,9 @@ Function Get-HFMHostsfile {
         If ( !$ComputerName ) {
             return [HostsFile]::New()
         } Else {
-            Return [HostsFile]::New($ComputerName)
+            Foreach ( $Computer in $ComputerName ) {
+                Return [HostsFile]::New($Computer)
+            }
         }
     }
 
@@ -76,8 +78,10 @@ Function Get-HFMHostsFileContent {
     BEGIN {}
 
     PROCESS {
-        $Path.ReadHostsFileContent()
-        return $Path.GetEntries()
+        Foreach ( $HostPath in $Path ) {
+            $HostPath.ReadHostsFileContent()
+            return $HostPath.GetEntries()
+        }
     }
 
     END {}
@@ -172,8 +176,7 @@ Function Set-HFMHostsFileEntry {
     BEGIN{}
 
     PROCESS{
-
-        Foreach ($File in $path ) {
+        Foreach ($File in $Path ) {
             $File.ReadHostsFileContent()
             $File.AddHostsEntry($Entries)
             $File.Set()
@@ -194,6 +197,6 @@ $h.GetEntries()
 $h.addHostEntries()
 $h.set()
 
-"localhost","L-FRA-370397" | Get-HFMHostsfile | Set-HFMHostsFileEntry -Entries $n,$m
+"DFT2-336449","L-FRA-370397" | Get-HFMHostsfile | Set-HFMHostsFileEntry -Entries $n,$m
 
 #>
