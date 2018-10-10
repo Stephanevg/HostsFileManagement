@@ -119,58 +119,62 @@ Class HostsFile {
       #>
     }
     
+    ## Backup Method
     [void]Backup([System.IO.DirectoryInfo]$BackupFolder){
-  
-      $BackupItems = Get-ChildItem -Path $BackupFolder.FullName -Filter "*Hosts.bak" | sort CreationTime
       
-      if ($BackupItems.count -gt $This.logRotation){
+      ## Get All Hosts.bak files in the BackupFolder path
+      $BackupItems = Get-ChildItem -Path $BackupFolder.FullName -Filter "*$($This.ComputerName)_Hosts.bak" | Sort-Object -Property CreationTime
       
+      ## Check if the number of correspoing backup files is equal or greater than LogRotation Property
+      If ( $BackupItems.Count -ge $This.LogRotation ) {
         #Remove the oldest Backup file
-        write-verbose "LogRotation set to maximum $($this.LogRotation) backups. Deleting oldest backup $($BackupItems[0].Name)"
+        Write-Verbose "LogRotation set to maximum $($This.LogRotation) backups. Deleting oldest backup $($BackupItems[0].Name)"
         $BackupItems[0].Delete()
       }
       
-      $FileStamp = get-date -Format 'yyyyMMdd-HHmmss'
-      #$backupPath = Split-Path -Parent $this.Path
-      $leaf = $FileStamp + "_" + "Hosts.bak"
-      $BackupFullPath = Join-Path -Path $BackupFolder.FullName -ChildPath $leaf
-      try{
+      ## Building backup file FullPath
+      $FileStamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+      $Leaf = $FileStamp + "_" + $This.ComputerName + "_Hosts.bak"
+      $BackupFullPath = Join-Path -Path $BackupFolder.FullName -ChildPath $Leaf
+
+      ## Copying the backup file to the destination path
+      Try {
         Copy-Item -Path $this.Path -Destination $BackupFullPath -ErrorAction stop
         Write-Verbose "Hosts file backup -> $($BackupFullPath)"
-      }catch{   
-          
+      } Catch {     
         Write-Warning "$_"
-  
       }
   
     }
-  
+    
+    ## Backup Method
     [void]Backup(){
   
+      ## Get All Hosts.bak files in the default Path
+      $BackupItems = Get-ChildItem -Path (split-Path -Path $this.Path -Parent) -Filter "*Hosts.bak" | Sort-Object CreationTime
       
-      $BackupItems = Get-ChildItem -Path (split-Path -Path $this.Path -Parent) -Filter "*Hosts.bak" | sort CreationTime
-      
-      #Based on hidden parameter 'logRotation' we can limit the number of backups we want to keep. Default is set to 5
+      ## Check if the number of correspoing backup files is equal or greater than LogRotation Property
       if ($BackupItems.count -gt $This.logRotation){
-      
-        #Remove the oldest Backup file
-        write-verbose "LogRotation set to maximum $($this.LogRotation) backups. Deleting oldest backup $($BackupItems[0].Name)"
+        ## Remove the oldest Backup file
+        Write-Verbose "LogRotation set to maximum $($this.LogRotation) backups. Deleting oldest backup $($BackupItems[0].Name)"
         $BackupItems[0].Delete()
       }
       
-      $FileStamp = get-date -Format 'yyyyMMdd-HHmmss'
-      $backupPath = Split-Path -Parent $this.Path
-      $leaf = $FileStamp + "_" + "Hosts.bak"
-      $BackupFullPath = Join-Path -Path $backupPath -ChildPath $leaf
-      try{
+      ## Building backup file FullPath
+      $FileStamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+      $BackupPath = Split-Path -Parent $this.Path
+      $Leaf = $FileStamp + "_" + "Hosts.bak"
+      $BackupFullPath = Join-Path -Path $backupPath -ChildPath $Leaf
+
+      ## Copying the backup file to the destination path
+      Try {
         Copy-Item -Path $this.Path -Destination $BackupFullPath -ErrorAction stop
         Write-Verbose "Hosts file backup -> $($BackupFullPath)"
-      }catch{   
-          
+      } Catch {   
         Write-Warning "$_"
-  
       }
     }
+
     <#
     [void]Set(){
       
