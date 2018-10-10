@@ -121,7 +121,7 @@ Class HostsFile {
     
     [void]Backup([System.IO.DirectoryInfo]$BackupFolder){
   
-      $BackupItems = Get-ChildItem -Path (split-Path -Path $BackupFolder.FullName -Parent) -Filter "*Hosts.bak" | sort CreationTime
+      $BackupItems = Get-ChildItem -Path $BackupFolder.FullName -Filter "*Hosts.bak" | sort CreationTime
       
       if ($BackupItems.count -gt $This.logRotation){
       
