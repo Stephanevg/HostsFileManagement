@@ -9,6 +9,9 @@ Function Get-HFMHostsFileContent {
         PS C:\> Get-HFMHostsFileContent -Path $a
         Use Get-HFMHostsFile to get a [HostsFile] object
         Use Get-HFMHostFileContent to return a [HostsEntry] object(s)
+    .EXAMPLE
+        PS C:\> Get-HFMHostsFile | Get-HFMHostsFileContent -ExcludeComments
+        List HostsFile entrie, but exclude comments
     .INPUTS
         Input must be of type [HostsFile].
     .OUTPUTS
@@ -23,7 +26,9 @@ Function Get-HFMHostsFileContent {
     Param
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
-        [HostsFile[]]$Path
+        [HostsFile[]]$Path,
+        [Parameter(Mandatory=$False)]
+        [Switch]$ExcludeComments = $False
     )
 
     BEGIN {}
@@ -31,7 +36,11 @@ Function Get-HFMHostsFileContent {
     PROCESS {
         Foreach ( $HostPath in $Path ) {
             $HostPath.ReadHostsFileContent()
-            return $HostPath.GetEntries()
+            If ( $ExcludeComments ) {
+                return $($HostPath.GetEntries() | Where-ObJect EntryType -ne "Comment")
+            } Else {
+                return $HostPath.GetEntries()
+            }
         }
     }
 
