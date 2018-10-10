@@ -1,4 +1,4 @@
-Manage local and remote Hosts file(s) using Powershell.
+# Manage local and remote Hosts file(s) using Powershell.
 
 This modules helps to read, parse, save, edit, and backup your local or remote HOSTS file.
 The main advantage of this module is that it makes converts the 'unstructured' HOSTS file, into a rich object.
