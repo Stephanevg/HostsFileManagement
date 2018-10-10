@@ -14,7 +14,7 @@ Class HostsFile {
     
       if (Test-Connection -ComputerName $ComputerName -Quiet -Count 2){
         $This.Path ="\\$Computername\admin$\System32\drivers\etc\hosts"
-        $This.ComputerName = $env:Computername
+        $This.ComputerName = $Computername
       }else{
         throw "Could not reach the computer $($ComputerName)"
       }
