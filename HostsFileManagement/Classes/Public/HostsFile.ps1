@@ -66,6 +66,15 @@ Class HostsFile {
       }
       
     }
+
+    ## Method to Set LogRotation Value
+    [Void]SetLogRotation([Int]$value){
+      If ( $value -in 1..100 ) {
+        $This.LogRotation = $value
+      } Else {
+        Throw "LogRotation must a int between 1 and 100 ..."
+      }
+    }
     
     [void]RemoveHostsEntry([HostsEntry[]]$entries){
       $NewStructure = @() 
