@@ -1,24 +1,26 @@
 
 Class HostsFile {
-    hidden [HostsEntry[]]$Entries
+    Hidden [HostsEntry[]]$Entries
     [string]$Path
-    hidden [int]$LogRotation = 5
+    Hidden [int]$LogRotation = 5
+    Hidden [String]$ComputerName
     
     HostsFile(){
-      $this.Path ="\\$env:Computername\admin$\System32\drivers\etc\hosts"
+      $This.Path ="\\$env:Computername\admin$\System32\drivers\etc\hosts"
+      $This.ComputerName = $env:Computername
     }
     
     HostsFile([String]$ComputerName){
     
       if (Test-Connection -ComputerName $ComputerName -Quiet -Count 2){
         $This.Path ="\\$Computername\admin$\System32\drivers\etc\hosts"
+        $This.ComputerName = $env:Computername
       }else{
         throw "Could not reach the computer $($ComputerName)"
       }
     }
     
     HostsFile([System.IO.FileSystemInfo]$Path){
-    
       $this.Path = $Path.fullName
     }
     
@@ -66,6 +68,15 @@ Class HostsFile {
       }
       
     }
+
+    ## Method to Set LogRotation Value
+    [Void]SetLogRotation([Int]$value){
+      If ( $value -in 1..100 ) {
+        $This.LogRotation = $value
+      } Else {
+        Throw "LogRotation must a int between 1 and 100 ..."
+      }
+    }
     
     [void]RemoveHostsEntry([HostsEntry[]]$entries){
       $NewStructure = @() 
@@ -110,7 +121,7 @@ Class HostsFile {
     
     [void]Backup([System.IO.DirectoryInfo]$BackupFolder){
   
-      $BackupItems = Get-ChildItem -Path (split-Path -Path $BackupFolder.FullName -Parent) -Filter "*Hosts.bak" | sort CreationTime
+      $BackupItems = Get-ChildItem -Path $BackupFolder.FullName -Filter "*Hosts.bak" | sort CreationTime
       
       if ($BackupItems.count -gt $This.logRotation){
       
