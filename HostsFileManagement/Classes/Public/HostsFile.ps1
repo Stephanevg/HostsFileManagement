@@ -3,7 +3,7 @@ Class HostsFile {
     Hidden [HostsEntry[]]$Entries
     [string]$Path
     Hidden [int]$LogRotation = 5
-    Hidden [String]$ComputerName
+    [String]$ComputerName
     
     HostsFile(){
       $This.Path ="\\$env:Computername\admin$\System32\drivers\etc\hosts"
