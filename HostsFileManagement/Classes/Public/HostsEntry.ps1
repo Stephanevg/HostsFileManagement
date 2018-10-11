@@ -11,140 +11,141 @@ Class HostsEntry{
         throw "This constructor cannot be used to create a blank line. Use the constructor with the empty signature HostsEntry()."
       }
   
-      $this.Ipaddress = $IpAddress
-      $this.HostName = $HostName
-      $this.FullQuallifiedName = $FQDN
-      $this.Description = $Description
-      $this.EntryType = $Type
+      $This.Ipaddress = $IpAddress
+      $This.HostName = $HostName
+      $This.FullQuallifiedName = $FQDN
+      $This.Description = $Description
+      $This.EntryType = $Type
     }
     
+    ## Add description to constructor
     HostsEntry([IpAddress]$IpAddress,[String]$HostName,[String]$FQDN,[String]$Description){
-      $this.Ipaddress = $IpAddress
-      $this.HostName = $HostName
-      $this.FullQuallifiedName = $FQDN
-      $this.Description = $Description
       
+      $This.Ipaddress = $IpAddress
+      $This.HostName = $HostName
+      $This.FullQuallifiedName = $FQDN
+      $This.Description = $Description
     }
-   
+    
+    ## Add description to constructor
     HostsEntry([String]$Comment,[HostsEntryType]$Type){
       
-      if (![Hostsentrytype]::Comment){
+      If ( ![Hostsentrytype]::Comment ) {
         throw "This constructor can only be used woth the [HostsEntryType]::Comment property."
       }
-      $this.Description = $Comment
-      $this.EntryType = $Type
+
+      $This.Description = $Comment
+      $This.EntryType = $Type
     }
-  
+    
+    ## Hiddent Constructor
     hidden HostsEntry([string]$Line){
+
+      ## Local variable
       $Type = [HostsEntry]::GetLineType($Line)
-  
-  
-      switch ($Type){
+
+      ## Determine type, and populate properties
+      Switch ($Type){
         "Comment" {
-          $this.EntryType = $Type
+          $This.EntryType = $Type
           $SplittedLine = [regex]::Split($line, "\s+") #$line.Split(" ")
-          if($SplittedLine[0] -match '^#\d{1,3}\.'){
-            $this.Ipaddress = $SplittedLine[0].replace("#","")
-            $this.HostName = $SplittedLine[1]
-            $this.FullQuallifiedName = $SplittedLine[2]
+          If ( $SplittedLine[0] -match '^#\d{1,3}\.' ) {
+            $This.Ipaddress = $SplittedLine[0].replace("#","")
+            $This.HostName = $SplittedLine[1]
+            $This.FullQuallifiedName = $SplittedLine[2]
             [string]$comment = ""
-            if ($SplittedLine.count -gt 3){
+
+            If ( $SplittedLine.count -gt 3 ) {
               $i = 3
               
-              while ($i -ne $SplittedLine.count){
-                if ($SplittedLine[$i] -ne ""){
+              While ( $i -ne $SplittedLine.count ) {
+                If ( $SplittedLine[$i] -ne "" ) {
                   $Comment += $SplittedLine[$i] + " "
-  
                   $i++
-  
-                }else{
-  
+                } Else {
                   $i++
                 }
               }
             }#end if splitted line gt 3
-  
-             
-            if ($Comment -match '^#.*'){
-              $this.Description = $Comment.Replace("#","")
-            }else{
-              $this.Description = $comment
+
+            If ( $Comment -match '^#.*' ) {
+              $This.Description = $Comment.Replace("#","")
+            } Else {
+              $This.Description = $comment
             }
   
-          }elseif($SplittedLine[0] -match '^#.*'){
-            #$this.Ipaddress = [ipaddress]::None
-            $this.HostName = [string]::Empty
-            $this.FullQuallifiedName = [string]::Empty
-  
-            $this.Description = $line.Replace("#","")
+          } ElseIf ( $SplittedLine[0] -match '^#.*' ) {
+            #$This.Ipaddress = [ipaddress]::None
+            $This.HostName = [string]::Empty
+            $This.FullQuallifiedName = [string]::Empty
+            $This.Description = $line.Replace("#","")
           }
-              
-  
+
         ;Break}
+
         "BlankLine" {
-          
-          $this.HostName = [string]::Empty
-          $this.FullQuallifiedName = [string]::Empty
-          $this.Description = [string]::Empty
-          $this.EntryType = $Type
-              
-          
+          $This.EntryType = $Type
+          $This.HostName = [string]::Empty
+          $This.Description = [string]::Empty
+          $This.FullQuallifiedName = [string]::Empty
         ;Break}
+
         "Entry" {
-              
           $SplittedLine = [regex]::Split($line, "\s+") #$line.Split(" ")
-          $this.Ipaddress = $SplittedLine[0]
-          $this.HostName = $SplittedLine[1]
-          $this.FullQuallifiedName = $SplittedLine[2]
-                  
+          $This.Ipaddress = $SplittedLine[0]
+          $This.HostName = $SplittedLine[1]
+          $This.FullQuallifiedName = $SplittedLine[2]
+     
           [string]$comment = ""
-          if ($SplittedLine.count -gt 3){
+
+          If ( $SplittedLine.count -gt 3 ) {
             $i = 3
-              
-            while ($i -ne $SplittedLine.count){
-              if ($SplittedLine[$i] -ne ""){
+            While ($i -ne $SplittedLine.count) {
+              If ( $SplittedLine[$i] -ne "" ) {
                 $Comment += $SplittedLine[$i] + " "
-  
                 $i++
-  
-              }else{
-  
+              } Else {
                 $i++
               }
             }
   
-            if ($comment -match '^#.*'){
-              $this.Description = $comment.Replace("#","")
-            }else{
-              $this.Description = $comment
+            If ($comment -match '^#.*' ) {
+              $This.Description = $comment.Replace("#","")
+            } Else {
+              $This.Description = $comment
             }
           }
   
         ;Break}
+
       }
     }
-  
+    
+    ## Default Constructor
     HostsEntry(){
-      $this.HostName = [string]::Empty
-      $this.FullQuallifiedName = [string]::Empty
-      $this.Description = [string]::Empty
-      $this.EntryType = [HostsEntryType]::BlankLine
+
+      $This.HostName = [String]::Empty
+      $This.FullQuallifiedName = [String]::Empty
+      $This.Description = [String]::Empty
+      $This.EntryType = [HostsEntryType]::BlankLine
       
     }
   
-  
+    ## Method to get the type of each line: comment, blankline or entry
     [HostsEntryType] static hidden GetLineType([string]$Line){
-  
-      $type = ""
-      switch -Regex ($line){
       
-        '^#'{$type = [HostsEntryType]::Comment;Break}
-        '^\s*$'{$type = [HostsEntryType]::BlankLine;Break}
-        Default {$type = [HostsEntryType]::Entry;Break}
-  
-      
+      ## local variables
+      $Type = ""
+
+      ## Switch to analyze the current $line with regex
+      Switch -Regex ($Line) {
+        '^#'    { $Type = [HostsEntryType]::Comment;Break }
+        '^\s*$' { $Type = [HostsEntryType]::BlankLine;Break }
+        Default { $Type = [HostsEntryType]::Entry;Break }
       }
-      return $type
+
+      return $Type
+
     }
   }
   
