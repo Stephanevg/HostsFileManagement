@@ -109,7 +109,6 @@ Class HostsFile {
 
       ## Fill ArrayListofThisEntries with current entries of the [HostsFile]
       Foreach ( $CurrEntry in $This.Entries ) { $ArrayListofThisEntries.add($CurrEntry) | Out-Null }
-      Remove-Variable CurrEntry
 
       ## Remove entries passed to the method from the arraylist
       Foreach ( $Entry in $Entries ) {
