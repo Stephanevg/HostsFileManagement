@@ -228,3 +228,4 @@ $HostFile.Set()
 This module is class based, see here the Class Diagram.
 
 ![ClassDiagram](/images/Class.HostsManagement.png)
+ 
