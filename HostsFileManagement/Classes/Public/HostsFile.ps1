@@ -101,45 +101,27 @@ Class HostsFile {
 
     }
     
-    [void]RemoveHostsEntry([HostsEntry[]]$entries){
-      $NewStructure = @() 
-      $found = $false  
-      
-      if ($entries){
-  
-        $This.Backup()
-        $This.Entries = $This.GetEntries() | ? {$Entries.IpAddress -notcontains $_.IpAddress}
-  
+    ## Method to remove Entries in the Hosts File
+    [void]RemoveHostsEntry([HostsEntry[]]$Entries){
+
+      ## Easier to work with an arraylist
+      $ArrayListofThisEntries = New-Object -TypeName System.Collections.ArrayList
+
+      ## Fill ArrayListofThisEntries with current entries of the [HostsFile]
+      Foreach ( $CurrEntry in $This.Entries ) { $ArrayListofThisEntries.add($CurrEntry) | Out-Null }
+      Remove-Variable CurrEntry
+
+      ## Remove entries passed to the method from the arraylist
+      Foreach ( $Entry in $Entries ) {
+        $ArrayListofThisEntries.Remove($Entry)
       }
-      <#
-          foreach ($EntryToDelete in $entries){
-  
-          foreach ($ExistingEntry in $This.Entries){
-  
-          if (($EntryToDelete.Ipaddress -eq $ExistingEntry.ipaddress) -and ($EntryToDelete.HostName -eq $ExistingEntry.HostName) -and ($EntryToDelete.FullQuallifiedName -eq $ExistingEntry.FullQuallifiedName) -and ($EntryToDelete.description -eq $ExistingEntry.Description) -and ($EntryToDelete.entryType -eq $ExistingEntry.EntryType)){
-  
-          $ExistingEntry
-          #Skipping
-            
-          }else{
-          $found = $true
-          $NewStructure += $ExistingEntry
-  
-          }
-  
-          }#end foreach existing entries
-        
-  
-          }#end foreach all entries to delete
-      
-          if ($found){
-        
-          $This.Entries = $NewStructure
-        
-          #write to file
-          }
-  
-      #>
+
+      ## Push ArrayListofThisEntries This.Entries
+      $This.Entries = $ArrayListofThisEntries
+
+      ## Call Set Method, will backup current
+      $This.Set()
+
     }
     
     ## Backup Method
@@ -177,7 +159,7 @@ Class HostsFile {
       $BackupItems = Get-ChildItem -Path (split-Path -Path $This.Path -Parent) -Filter "*Hosts.bak" | Sort-Object CreationTime
       
       ## Check if the number of correspoing backup files is equal or greater than LogRotation Property
-      if ($BackupItems.count -gt $This.logRotation){
+      If ($BackupItems.count -gt $This.logRotation){
         ## Remove the oldest Backup file
         Write-Verbose "LogRotation set to maximum $($This.LogRotation) backups. Deleting oldest backup $($BackupItems[0].Name)"
         $BackupItems[0].Delete()
@@ -408,22 +390,13 @@ Class HostsFile {
           try{
             write-verbose "Adding: $($fullLine) to $($This.path)"
             #Start-Sleep -Milliseconds 70
-  
-            
-  
-              $stream.WriteLine($FullLine)
-  
-  
-  
-  
+            $stream.WriteLine($FullLine)
             #$fullLine | Add-Content -Path $This.Path -ErrorAction stop
             
           }catch{
             write-warning "$_"
             
           }
-        
-        
         }#endforeach
   
         $stream.close()
