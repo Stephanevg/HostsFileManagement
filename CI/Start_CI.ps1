@@ -7,6 +7,8 @@ Get-Module $moduleName
 #Pester Tests
 write-verbose "invoking pester"
 #$TestFiles = (Get-ChildItem -Path .\ -Recurse  | ?{$_.name.EndsWith(".ps1") -and $_.name -notmatch ".tests." -and $_.name -notmatch "build" -and $_.name -notmatch "Example"}).Fullname
+
+gci $env:APPVEYOR_BUILD_FOLDER
 $res = Invoke-Pester -Path "$($env:APPVEYOR_BUILD_FOLDER)\Tests" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru #-CodeCoverage $TestFiles
 
 #Uploading Testresults to Appveyor
