@@ -1,5 +1,5 @@
 ﻿
-Import-Module -Force $PSScriptRoot\..\HostsFileManagement.psd1
+Import-Module -Force $PSScriptRoot\..\HostsFileManagement\HostsFileManagement.psd1
 
 InModuleScope HostsFileManagement {
 
