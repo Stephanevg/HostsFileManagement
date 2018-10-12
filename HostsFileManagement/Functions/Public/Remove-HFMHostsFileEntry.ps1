@@ -19,31 +19,41 @@ Function Remove-HFMHostsFileEntry {
     (
         [Parameter(Mandatory=$True,ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
         [HostsFile[]]$Path,
-        [Parameter(Mandatory=$True,ValueFromPipeline=$True)]
+        [Parameter(Mandatory=$True)]
         ## Accepte string ou [HostEntry]
-        [Object[]]$Entries ## m en fou de stephanexD
+        [Object[]]$Entries
     )
 
     BEGIN{}
 
     PROCESS{
-
         Foreach ( $File in $Path ) {
 
             Switch ( $Entries ) {
 
                 ({ $PSItem.GetType().FullName -eq 'System.String' }) {
                     $HostsEntry = [HostsEntry]::New($PSItem)
-                    $File.RemoveHostsEntry($HostsEntry)
+                    If ( $null -eq $File.entries) {
+                        Throw "Please run Get-HFMHostsFileContent first..."
+                    } Else {
+                        ## Is Current Entry present in file.entries, add it to TobeRemoved Array
+                        $File.entries | Where-Object { ($_.Ipaddress -eq $HostsEntry.Ipaddress) -and ($_.EntryType -eq $HostsEntry.EntryType)} | %{ $ToBeRemove+=$_ }
+                    }
+                    Break;
                 }
 
                 ({ $PSItem.GetType().FullName -eq 'HostsEntry'}) {
-                    $File.RemoveHostsEntry($PSItem)
+                    $HostsEntry = $PSitem
+                    ## Is Current Entry present in file.entries, add it to TobeRemoved Array
+                    $File.entries | Where-Object { ($PSItem.Iaddress -eq $HostsEntry.IpAddress) -and ($PSItem.EntryType -eq $HostsEntry.EntryType)} | %{ $ToBeRemove+=$_ }
+                    Break;
                 }
 
-                Default { Throw "Entries must be of type System.String or HostsEntry" }
+                Default { Throw "Entries must be of type System.String or HostsEntry"; Break }
             }
 
+            ## Remove entries
+            $File.RemoveHostsEntry($ToBeRemove)
         }
     }
 
