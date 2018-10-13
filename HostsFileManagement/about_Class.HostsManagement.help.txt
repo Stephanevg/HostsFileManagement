@@ -1,11 +1,11 @@
-﻿TOPIC
+TOPIC
     about_ClassHostsManagement
 
 SHORT DESCRIPTION
     Manage Hosts file using Powershell Classes.
 
 LONG DESCRIPTION
-    This modules helps to reade, parse, save, edit, and backup your local or remote HOSTS file.
+    This modules helps to read, parse, save, edit and backup your local or remote HOSTS file.
     The main advantage of this module is that it makes converts the 'unstructured' HOSTS file, into a rich object.
     It becomes easy to filter a HOSTS file to find entries that are double, incorrect, or that need to be deleted.
     New entries can easily be added as well.
@@ -20,7 +20,6 @@ LONG DESCRIPTION
     - HostsEntryType (Enum)
       Represents the type of the HOSTS Entry line.
 
-
       Structure:
 
       [HostsFile]
@@ -31,18 +30,18 @@ LONG DESCRIPTION
 
       The difference classes (and Enum(s)) represent the logical structure of a HOSTS file and it's content.
       A HostsFile points to a file (which is by default, but not necessarly, located at "c:\System32\drivers\etc\hosts").
-      The HostsFile contains several entries (or lines). Each Hosts file entry is an object that can be of one of these different types (which are grouped together in the 'HostsEntryType' Enum).
+      The HostsFile contains several entries (or lines). Each Hosts file entry is an object that can be of one of these different types       (which are grouped together in the 'HostsEntryType' Enum).
       
       Entry:
-      It can be a regular entry. It links an IP address to a HostsName, and a Full qualified name. Additionnaly, it can have a comment at the end to give additional information about the entry.
+      It can be a regular entry. It links an IP address to a HostsName, and a Full qualified name. Additionnaly, it can have a comment         at the end to give additional information about the entry.
 
       Comment:
-      A comment in the HOSTS file starts with the symbol # (pound). A comment can either be used to comment a Hosts entry, or to delimit a header section, in order to group entries logically together.
+      A comment in the HOSTS file starts with the symbol # (pound). A comment can either be used to comment a Hosts entry, or to delimit       a header section, in order to group entries logically together.
 
       BlankLine:
-      A hosts file can contain blank lines to separate the different entries and comments, in order to create a more friendly to read structure.
+      A hosts file can contain blank lines to separate the different entries and comments, in order to create a more friendly to read         structure.
 
-  Read a hosts file:
+   Read a hosts file:
     1) Create an instance of the [Hostsfile] class
     2) Call the GetHostsEntries Method
 
