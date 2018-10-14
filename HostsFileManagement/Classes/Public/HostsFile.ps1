@@ -3,7 +3,7 @@ Class HostsFile {
     [string]$Path
     [String]$ComputerName
     Hidden [HostsEntry[]]$Entries
-    Hidden [int]$LogRotation = 5
+    Hidden [int]$LogRotation = 4
     
     ## Default Constructor
     HostsFile(){
@@ -108,18 +108,21 @@ Class HostsFile {
       $ArrayListofThisEntries = New-Object -TypeName System.Collections.ArrayList
 
       ## Fill ArrayListofThisEntries with current entries of the [HostsFile]
+      Write-Verbose "Creating an arraylist of this.entries ... easier to work with ..."
       Foreach ( $CurrEntry in $This.Entries ) { $ArrayListofThisEntries.add($CurrEntry) | Out-Null }
-      Remove-Variable CurrEntry
 
       ## Remove entries passed to the method from the arraylist
       Foreach ( $Entry in $Entries ) {
+        Write-Verbose "Removing the current entry: $($Entry.IpAddress) ..."
         $ArrayListofThisEntries.Remove($Entry)
       }
 
       ## Push ArrayListofThisEntries This.Entries
+      Write-Verbose "Pushing updated arraylist to this.entries ..."
       $This.Entries = $ArrayListofThisEntries
 
       ## Call Set Method, will backup current
+      Write-Verbose "Applying changes by calling this.set ..."
       $This.Set()
 
     }
@@ -133,7 +136,7 @@ Class HostsFile {
       ## Check if the number of correspoing backup files is equal or greater than LogRotation Property
       If ( $BackupItems.Count -ge $This.LogRotation ) {
         #Remove the oldest Backup file
-        Write-Verbose "LogRotation set to maximum $($This.LogRotation) backups. Deleting oldest backup $($BackupItems[0].Name)"
+        Write-Verbose "LogRotation set to maximum $($This.LogRotation+1) backups. Deleting oldest backup $($BackupItems[0].Name)"
         $BackupItems[0].Delete()
       }
       
@@ -161,7 +164,7 @@ Class HostsFile {
       ## Check if the number of correspoing backup files is equal or greater than LogRotation Property
       If ($BackupItems.count -gt $This.logRotation){
         ## Remove the oldest Backup file
-        Write-Verbose "LogRotation set to maximum $($This.LogRotation) backups. Deleting oldest backup $($BackupItems[0].Name)"
+        Write-Verbose "LogRotation set to maximum $($This.LogRotation+1) backups. Deleting oldest backup $($BackupItems[0].Name)"
         $BackupItems[0].Delete()
       }
       

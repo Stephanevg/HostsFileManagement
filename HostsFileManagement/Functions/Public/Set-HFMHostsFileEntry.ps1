@@ -39,7 +39,7 @@ Function Set-HFMHostsFileEntry {
 
     PROCESS{
 
-        Foreach ($File in $path ) {
+        Foreach ( $File in $Path ) {
             $File.ReadHostsFileContent()
             $File.AddHostsEntry($Entries)
             $File.Set()
